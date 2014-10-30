@@ -57,6 +57,58 @@ def set_arm(arm, new):
 
    piglow.update_leds(hw_val)
 
+
+def arm_rotate(delay):
+	for i in range(3):
+		new = [200,40,40,40,40,10]
+		set_arm(i,new)	
+               	time.sleep(delay)
+		new = [0,0,0,0,0,0]
+		set_arm(i,new)	
+
+
+def arm_pulse(delay):
+	for i in range(3):
+		new = [200,40,40,40,40,0]
+		set_arm(i,new)	
+               	time.sleep(delay)
+
+	for i in range(3):
+		new = [0,0,0,0,0,0]
+		set_arm(i,new)	
+               	time.sleep(delay)
+
+def arm_sequence(delay):
+	
+	for j in range(6):
+
+		new = [0,0,0,0,0,0]
+		new[j] = 10 + j*10
+
+		for i in range(3):
+			set_arm(i,new)	
+               	time.sleep(delay)
+	
+
+def arm_fade(arm, delay):
+	new = [0,0,0,0,0,0]
+	set_arm(arm,new)	
+	for i in range(25):
+		for j in range(6):
+			new[j] = 10 + i*10
+
+		set_arm(arm,new)	
+               	time.sleep(delay)
+	
+
+def led_sequence(delay):
+  	for i in range(18):
+		values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		values[arm_map[i]] = 40
+		piglow.update_leds(values)
+		time.sleep(delay)
+	values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
  
 # a list of 18 values between 0 - 255 that represent each LED on the PiGlow.
 # to change the LEDs we set the values in this array and then pass it to the
@@ -71,24 +123,22 @@ piglow = PiGlow(1)
 # loop forever, i mean why would we ever want to stop now the party has started?
 # you can however use Ctrl+C to stop the script and reset the LEDs to off state
 try:
-   	for j in range(1):
-		for i in range(18):
-			values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-			values[arm_map[i]] = 40
-			piglow.update_leds(values)
-			time.sleep(0.02)
-	values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-
+ 
         while True:
-       
-		for i in range(3):
+		arm_fade(0, 0.1)
+		arm_fade(1, 0.1)
+		arm_fade(2, 0.1)
 
-			new = [200,40,40,40,40,0]
-			set_arm(i,new)	
-                	time.sleep(0.1)
+       		led_sequence(0.1)
 
-			new = [0,0,0,0,0,0]
-			set_arm(i,new)	
+		for i in range(2):
+			arm_rotate(0.1)
+		for i in range(2):
+			arm_pulse(0.25)
+
+		for i in range(5):
+			arm_sequence(0.25)
+
 
                 
 except KeyboardInterrupt:
